@@ -1,0 +1,76 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  # name: A unique name for this Argo CD Application resource.
+  # This name will appear in the Argo CD UI and CLI.
+  # Choose something descriptive, like the application name and environment (e.g., myapp-dev, nginx-staging).
+  name: 'my-nginx-app' # Example name
+
+spec:
+  destination:
+    # namespace: The Kubernetes namespace in the target cluster where resources should be deployed.
+    # This namespace must exist in the target cluster before Argo CD syncs the application (unless you enable auto-create namespace in sync options).
+    namespace: 'default' # Example: Deploy to the 'default' namespace
+
+    # server: The API server URL of the target Kubernetes cluster where the application will be deployed.
+    # If deploying to the same cluster where Argo CD is running, use 'https://kubernetes.default.svc'.
+    # If deploying to an external cluster (like your EKS cluster), use the API server URL you found earlier (e.g., https://<EKS_CLUSTER_ID>...).
+    server: 'https://0C3E439D5738B9F1A95DD4E2B9A0773D.gr7.ap-south-1.eks.amazonaws.com' # Example: Deploy to the same cluster Argo CD is in
+    # server: 'https://<EKS_CLUSTER_ID>.gr7.us-east-2.eks.amazonaws.com' # Example: Deploy to an EKS cluster
+
+  # source: Defines a *single* source for the application manifests (e.g., a single Git repo).
+  # Use 'source' for applications that pull manifests from one location.
+  source:
+    # path: The relative path within the Git repository to the directory containing your Kubernetes manifest files (YAML, Kustomize base, Helm chart, etc.).
+    # If your manifests are at the root of the repo, you can use ''.
+    path: 'manifests/nginx' # Example: Manifests are in a subdirectory named 'manifests/nginx'
+
+    # repoURL: The URL of the Git repository containing the application manifests.
+    # Can be HTTPS or SSH. Make sure Argo CD has credentials to access it if it's private.
+    repoURL: 'https://github.com/your-org/your-app-repo.git' # Example GitHub HTTPS URL
+    # repoURL: 'git@github.com:your-org/your-app-repo.git' # Example GitHub SSH URL
+
+    # targetRevision: The Git revision to sync. Can be a branch name, a tag, or a commit SHA.
+    # Using 'HEAD' tracks the latest commit on the default branch (usually 'main' or 'master').
+    # Using a specific tag (e.g., 'v1.0.0') or commit SHA provides more stability for releases.
+    targetRevision: 'HEAD' # Example: Track the latest commit on the default branch
+    # targetRevision: 'main' # Example: Track the 'main' branch explicitly
+    # targetRevision: 'v1.0.0' # Example: Track a specific tag
+    # targetRevision: 'abcdef123456...' # Example: Track a specific commit
+
+  # sources: Use this field INSTEAD OF 'source' if your application needs manifests from *multiple* sources (e.g., a base Kustomize from one repo and overlays from another).
+  # Since the template includes both 'source' and 'sources: []', and 'source' is populated,
+  # we will focus on the single 'source' configuration. If you need multi-source, you would remove the 'source' block
+  # and define multiple source entries under 'sources:'.
+  sources: [] # Keep this empty or remove it if using the single 'source' block.
+
+  # project: The name of the Argo CD project this application belongs to.
+  # This project controls where the application is allowed to deploy (destinations) and which sources it can pull from (sourceRepos).
+  # Use 'default' if you haven't set up custom projects, or use the name of your custom project (e.g., 'lab').
+  # The project specified here *must* exist in Argo CD.
+  project: 'default' # Example: Assign to the default project
+  # project: 'lab' # Example: Assign to the 'lab' project
+
+  # Optional Fields (Common):
+
+  # syncPolicy: Configure automated or manual syncing, pruning, and conflict resolution.
+  # syncPolicy:
+  #   automated:
+  #     prune: true # Automatically delete resources that are no longer in Git
+  #     selfHeal: true # Automatically sync when the live state drifts from the desired state in Git
+  #   syncOptions:
+  #   - CreateNamespace=true # Automatically create the destination namespace if it doesn't exist
+
+  # ignoreDifferences: Tell Argo CD to ignore changes to specific fields or resources
+  # ignoreDifferences:
+  # - group: apps
+  #   kind: Deployment
+  #   jsonPointers:
+  #   - /spec/replicas # Ignore changes to the replica count for Deployments
+  # - kind: Service
+  #   name: my-service
+  #   jsonPointers:
+  #   - /spec/clusterIP # Ignore changes to the clusterIP for a specific service (ClusterIP is assigned by K8s)
+
+  # revisionHistoryLimit: The number of successful syncs to retain in history.
+  # revisionHistoryLimit: 10 # Keep the last 10 successful sync records

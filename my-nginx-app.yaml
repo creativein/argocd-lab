@@ -15,7 +15,7 @@ spec:
     # server: The API server URL of the target Kubernetes cluster where the application will be deployed.
     # If deploying to the same cluster where Argo CD is running, use 'https://kubernetes.default.svc'.
     # If deploying to an external cluster (like your EKS cluster), use the API server URL you found earlier (e.g., https://<EKS_CLUSTER_ID>...).
-    server: 'https://0C3E439D5738B9F1A95DD4E2B9A0773D.gr7.ap-south-1.eks.amazonaws.com' # Example: Deploy to the same cluster Argo CD is in
+    server: 'https://kubernetes.default.svc' # Example: Deploy to the same cluster Argo CD is in
     # server: 'https://<EKS_CLUSTER_ID>.gr7.us-east-2.eks.amazonaws.com' # Example: Deploy to an EKS cluster
 
   # source: Defines a *single* source for the application manifests (e.g., a single Git repo).
@@ -27,7 +27,7 @@ spec:
 
     # repoURL: The URL of the Git repository containing the application manifests.
     # Can be HTTPS or SSH. Make sure Argo CD has credentials to access it if it's private.
-    repoURL: 'https://github.com/your-org/your-app-repo.git' # Example GitHub HTTPS URL
+    repoURL: 'git@github.com:creativein/argocd-lab.git' # Example GitHub HTTPS URL
     # repoURL: 'git@github.com:your-org/your-app-repo.git' # Example GitHub SSH URL
 
     # targetRevision: The Git revision to sync. Can be a branch name, a tag, or a commit SHA.
